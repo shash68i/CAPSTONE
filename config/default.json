@@ -1,0 +1,4 @@
+{
+  "mongoURI": "mongodb+srv://shash:shash123@koya.vwwyf.mongodb.net/koya?retryWrites=true&w=majority",
+  "jwtSecret": "my-ultimate-jwt-secret-token"
+}
