@@ -46,18 +46,18 @@ router.post(
           .json({ errors: [{ msg: "Email already exists" }] });
       }
 
-      user = new User({ username, email, password });
+      createdUser = new User({ username, email, password });
 
       // Encrypt the Password
       const salt = await bcrypt.genSalt(12);
-      user.password = await bcrypt.hash(password, salt);
+      createdUser.password = await bcrypt.hash(password, salt);
 
-      await user.save();
+      await createdUser.save();
 
       // Return JSON Web Token
       const payload = {
         user: {
-          id: user.id,
+          id: createdUser.id,
         },
       };
 
