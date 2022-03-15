@@ -3,8 +3,6 @@ const config = require("config");
 const router = express.Router();
 const auth = require("../../middleware/auth");
 const { check, validationResult } = require("express-validator");
-// Bring in normalize to give us a proper url, regardless of what user entered
-const normalize = require("normalize-url");
 // const checkObjectId = require('../../middleware/checkObjectId');
 
 const Profile = require("../../models/Profile");
@@ -28,6 +26,42 @@ router.get("/me", auth, async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
+  }
+});
+
+// @route    POST api/profile
+// @desc     Create or update user profile
+// @access   Private
+router.post("/", auth, async (req, res) => {
+  // Destructure the request
+  const { image_url, address, bio, twitter, instagram, facebook } = req.body;
+
+  // Build a profile
+  const profileFields = {};
+
+  // Profile user is set to current logged in user
+  profileFields.user = req.user.id;
+
+  if (image_url) profileFields.image_url = image_url;
+  if (address) profileFields.address = address;
+  if (bio) profileFields.bio = bio;
+
+  profileFields.social = {};
+  if (twitter) profileFields.social.twitter = twitter;
+  if (instagram) profileFields.social.instagram = instagram;
+  if (facebook) profileFields.social.facebook = facebook;
+
+  try {
+    // Using upsert option (creates new doc if no match is found):
+    let profile = await Profile.findOneAndUpdate(
+      { user: req.user.id },
+      { $set: profileFields },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    );
+    return res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send("Server Error");
   }
 });
 
