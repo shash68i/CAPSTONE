@@ -37,14 +37,7 @@ const PostSchema = new Schema({
     type: [String],
     required: true,
   },
-  likes: [
-    {
-      user: {
-        type: Schema.Types.ObjectId,
-        ref: "users",
-      },
-    },
-  ],
+  likes: [Schema.Types.ObjectId],
   comments: [
     {
       user: {
@@ -54,7 +47,6 @@ const PostSchema = new Schema({
       username: {
         type: String,
         required: true,
-        unique: true,
       },
       first_name: {
         type: String,
@@ -71,15 +63,6 @@ const PostSchema = new Schema({
         type: String,
         required: true,
       },
-      text: {
-        type: String,
-        required: true,
-      },
-      text: {
-        type: String,
-        required: true,
-      },
-
       date: {
         type: Date,
         default: Date.now,
