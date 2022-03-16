@@ -40,7 +40,7 @@ router.post(
 
         text: req.body.text,
         images: req.body.images,
-        location: req.body.location,
+        location: req.body.location.toLowerCase(),
         tags: req.body.tags,
       });
 
@@ -60,6 +60,36 @@ router.post(
 router.get("/", auth, async (req, res) => {
   try {
     const posts = await Post.find().sort({ date: -1 });
+    res.json(posts);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route    GET api/posts/:user_id
+// @desc     Get all posts of Particular user
+// @access   Private
+router.get("/user/:user_id", auth, async (req, res) => {
+  try {
+    const posts = await Post.find({ user: req.params.user_id }).sort({
+      date: -1,
+    });
+    res.json(posts);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route    GET api/posts/location/:location
+// @desc     Get all posts of Particular Location
+// @access   Private
+router.get("/location/:location", auth, async (req, res) => {
+  try {
+    const posts = await Post.find({ location: req.params.location.toLowerCase() }).sort({
+      date: -1,
+    });
     res.json(posts);
   } catch (err) {
     console.error(err.message);
@@ -176,40 +206,37 @@ router.post(
   }
 );
 
-
 // @route    DELETE api/posts/comment/:id/:comment_id
 // @desc     Delete comment
 // @access   Private
-router.delete('/comment/:id/:comment_id', auth, async (req, res) => {
-    try {
-      const post = await Post.findById(req.params.id);
-  
-      // Pull out comment
-      const comment = post.comments.find(
-        (comment) => comment.id === req.params.comment_id
-      );
-      // Make sure comment exists
-      if (!comment) {
-        return res.status(404).json({ msg: 'Comment does not exist' });
-      }
-      // Check user
-      if (comment.user.toString() !== req.user.id) {
-        return res.status(401).json({ msg: 'User not authorized' });
-      }
-  
-      post.comments = post.comments.filter(
-        ({ id }) => id !== req.params.comment_id
-      );
-  
-      await post.save();
-  
-      return res.json(post.comments);
-    } catch (err) {
-      console.error(err.message);
-      return res.status(500).send('Server Error');
+router.delete("/comment/:id/:comment_id", auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    // Pull out comment
+    const comment = post.comments.find(
+      (comment) => comment.id === req.params.comment_id
+    );
+    // Make sure comment exists
+    if (!comment) {
+      return res.status(404).json({ msg: "Comment does not exist" });
     }
-  });
+    // Check user
+    if (comment.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: "User not authorized" });
+    }
 
+    post.comments = post.comments.filter(
+      ({ id }) => id !== req.params.comment_id
+    );
 
+    await post.save();
+
+    return res.json(post.comments);
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send("Server Error");
+  }
+});
 
 module.exports = router;
