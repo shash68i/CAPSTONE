@@ -36,7 +36,7 @@ router.post(
         username: user.username,
         first_name: user.first_name,
         last_name: user.last_name,
-        user_proile_img: profile.image_url,
+        user_profile_img: profile.image_url,
 
         text: req.body.text,
         images: req.body.images,
@@ -70,7 +70,7 @@ router.get("/", auth, async (req, res) => {
 // @route    GET api/posts/:user_id
 // @desc     Get all posts of Particular user
 // @access   Private
-router.get("/user/:user_id", auth, async (req, res) => {
+router.get("/user/:user_id", async (req, res) => {
   try {
     const posts = await Post.find({ user: req.params.user_id }).sort({
       date: -1,
@@ -87,7 +87,9 @@ router.get("/user/:user_id", auth, async (req, res) => {
 // @access   Private
 router.get("/location/:location", auth, async (req, res) => {
   try {
-    const posts = await Post.find({ location: req.params.location.toLowerCase() }).sort({
+    const posts = await Post.find({
+      location: req.params.location.toLowerCase(),
+    }).sort({
       date: -1,
     });
     res.json(posts);
@@ -148,16 +150,36 @@ router.delete("/:id", auth, async (req, res) => {
 router.put("/like-unlike/:id", auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    const is_liked = post.likes.includes(req.user.id);
+    const { username, first_name, last_name } = await User.findById(
+      req.user.id
+    );
+    const profile = await Profile.find({ user: req.user.id });
+    const newLike = {
+      user: req.user.id,
+      username,
+      first_name,
+      last_name,
+      user_profile_img: profile[0].image_url,
+    };
+
+    let is_liked = false;
+    for (let item of post.likes) {
+      if (item.user == req.user.id) {
+        is_liked = true;
+        break;
+      }
+    }
 
     if (!is_liked) {
-      post.likes.push(req.user.id);
+      post.likes.push(newLike);
     } else {
-      post.likes = post.likes.filter((user) => user != req.user.id);
+      post.likes = post.likes.filter(({ user }) => user != req.user.id);
     }
 
     await post.save();
-    res.send(is_liked);
+
+    if (is_liked) res.send("Unlike Successful");
+    if (!is_liked) res.send("Like Successful");
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");

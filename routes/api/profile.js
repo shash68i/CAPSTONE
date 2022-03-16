@@ -32,6 +32,7 @@ router.get("/me", auth, async (req, res) => {
 // @desc     Create or update user profile
 // @access   Private
 router.post("/", auth, async (req, res) => {
+  
   // Destructure the request
   const { image_url, address, bio, twitter, instagram, facebook } = req.body;
 

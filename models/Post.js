@@ -37,7 +37,25 @@ const PostSchema = new Schema({
     type: [String],
     required: true,
   },
-  likes: [Schema.Types.ObjectId],
+  likes: [
+    {
+      user: {
+        type: Schema.Types.ObjectId,
+      },
+      username: {
+        type: String,
+      },
+      first_name: {
+        type: String,
+      },
+      last_name: {
+        type: String,
+      },
+      user_profile_img: {
+        type: String,
+      },
+    },
+  ],
   comments: [
     {
       user: {
