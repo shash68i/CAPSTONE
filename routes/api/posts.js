@@ -31,12 +31,13 @@ router.post(
         user: req.user.id,
       });
 
+
       const newPost = new Post({
         user: req.user.id,
         username: user.username,
         first_name: user.first_name,
         last_name: user.last_name,
-        user_profile_img: profile.image_url,
+        profile_pic: profile.profile_pic,
 
         text: req.body.text,
         images: req.body.images,

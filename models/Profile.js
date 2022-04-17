@@ -5,7 +5,7 @@ const ProfileSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
   },
-  image_url: {
+  profile_pic: {
     type: String,
   },
   address: {
@@ -14,16 +14,14 @@ const ProfileSchema = new mongoose.Schema({
   bio: {
     type: String,
   },
-  social: {
-    twitter: {
-      type: String,
-    },
-    facebook: {
-      type: String,
-    },
-    instagram: {
-      type: String,
-    },
+  twitter: {
+    type: String,
+  },
+  facebook: {
+    type: String,
+  },
+  instagram: {
+    type: String,
   },
   date: {
     type: Date,

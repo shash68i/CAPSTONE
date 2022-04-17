@@ -32,9 +32,17 @@ router.get("/me", auth, async (req, res) => {
 // @desc     Create or update user profile
 // @access   Private
 router.post("/", auth, async (req, res) => {
-  
   // Destructure the request
-  const { image_url, address, bio, twitter, instagram, facebook } = req.body;
+  const {
+    profile_pic,
+    address,
+    bio,
+    location,
+    email,
+    twitter,
+    instagram,
+    facebook,
+  } = req.body;
 
   // Build a profile
   const profileFields = {};
@@ -42,14 +50,16 @@ router.post("/", auth, async (req, res) => {
   // Profile user is set to current logged in user
   profileFields.user = req.user.id;
 
-  if (image_url) profileFields.image_url = image_url;
-  if (address) profileFields.address = address;
-  if (bio) profileFields.bio = bio;
+  profileFields.profile_pic = profile_pic;
+  profileFields.address = address;
+  profileFields.bio = bio;
+  profileFields.location = location;
+  profileFields.email = email;
 
   profileFields.social = {};
-  if (twitter) profileFields.social.twitter = twitter;
-  if (instagram) profileFields.social.instagram = instagram;
-  if (facebook) profileFields.social.facebook = facebook;
+  profileFields.social.twitter = twitter;
+  profileFields.social.instagram = instagram;
+  profileFields.social.facebook = facebook;
 
   try {
     // Using upsert option (creates new doc if no match is found):
