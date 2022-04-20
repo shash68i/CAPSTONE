@@ -59,8 +59,10 @@ router.post(
 // @desc     Get all posts
 // @access   Private
 router.get("/", auth, async (req, res) => {
+  const PAGE_SIZE = 3;
+  const skip = (req.query.page - 1) * PAGE_SIZE;
   try {
-    const posts = await Post.find().sort({ date: -1 });
+    const posts = await Post.find().skip(skip).limit(PAGE_SIZE).sort({ date: -1 });
     res.json(posts);
   } catch (err) {
     console.error(err.message);
