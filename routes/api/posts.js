@@ -180,9 +180,10 @@ router.put("/like-unlike/:id", auth, async (req, res) => {
     }
 
     await post.save();
+    
+    if (is_liked) res.send(post.likes);
+    if (!is_liked) res.send(post.likes);
 
-    if (is_liked) res.send("Unlike Successful");
-    if (!is_liked) res.send("Like Successful");
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
