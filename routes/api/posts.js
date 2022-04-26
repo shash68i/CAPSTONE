@@ -41,7 +41,7 @@ router.post(
 
         text: req.body.text,
         images: req.body.images,
-        location: req.body.location.toLowerCase(),
+        location: req.body.location,
         tags: req.body.tags,
       });
 
@@ -89,9 +89,10 @@ router.get("/user/:user_id", async (req, res) => {
 // @desc     Get all posts of Particular Location
 // @access   Private
 router.get("/location/:location", auth, async (req, res) => {
+  console.log(req.params);
   try {
     const posts = await Post.find({
-      location: req.params.location.toLowerCase(),
+      location: req.params.location
     }).sort({
       date: -1,
     });
